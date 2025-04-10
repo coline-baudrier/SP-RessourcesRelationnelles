@@ -157,5 +157,4 @@ A mettre en place.
 
 ## Contact & Contributeurs
 
-👩‍💻 **Développé par** [@coline-baudrier](https://github.com/coline-baudrier)  
-📩 **Contact :** coline.baudrier@outlook.com
+👩‍💻 **Développé par** : [@coline-baudrier](https://github.com/coline-baudrier) - [@LeRouxTom](https://github.com/LeRouxTom) - [@GBIRRIEN](https://github.com/GBIRRIEN)
