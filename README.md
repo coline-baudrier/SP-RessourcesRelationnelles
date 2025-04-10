@@ -103,10 +103,7 @@ cd frontend
 # 2. Récupérer les dépendances Dart/Flutter
 flutter pub get
 
-# 3. Générer les fichiers spécifiques à la plateforme
-flutter create --empty .  # Re-génère android/, ios/, etc. si besoin
-
-# 4. Lancer l'app (pensez à allumer l'émulateur avant)
+# 3. Lancer l'app (pensez à allumer l'émulateur avant)
 flutter run
 ```
 
