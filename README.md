@@ -4,7 +4,7 @@
 
 ---
 
-## Fonctionnalités Principales
+## Fonctionnalités Principales
 
 - [ ] Authentification (JWT)
 
@@ -104,7 +104,7 @@ cd frontend
 flutter pub get
 
 # 3. Générer les fichiers spécifiques à la plateforme
-flutter create .  # Re-génère android/, ios/, etc. si besoin
+flutter create --empty .  # Re-génère android/, ios/, etc. si besoin
 
 # 4. Lancer l'app (pensez à allumer l'émulateur avant)
 flutter run

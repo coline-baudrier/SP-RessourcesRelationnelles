@@ -161,9 +161,6 @@ app.*.symbols
 .gclient_previous_sync_commits
 
 # Environnements spécifiques
-android/
-ios/
 linux/
 macos/
 windows/
-web/
