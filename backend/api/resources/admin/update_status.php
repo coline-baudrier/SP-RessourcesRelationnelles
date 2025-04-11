@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../database.php';
+require_once __DIR__ . '/../../../database.php';
 require_once __DIR__ . '/../../controllers/ResourceController.php';
 require_once __DIR__ . '/../../cors-header.php';
 
@@ -12,17 +12,22 @@ try {
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
 
-    $id = $_GET['id'] ?? null;
-    if (!$id) {
-        throw new Exception("ID ressource manquant");
-    }
-
     $data = json_decode(file_get_contents('php://input'), true);
-    if (json_last_error() !== JSON_ERROR_NONE || !isset($data['status'])) {
-        throw new Exception("Statut manquant ou format invalide");
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("Format JSON invalide");
     }
 
-    $result = $controller->updateResourceStatus($id, $data['status'], $token);
+    if (!isset($data['id'])) {
+        throw new Exception("ID ressource manquant dans le corps de la requête");
+    }
+    if (!isset($data['status'])) {
+        throw new Exception("Statut manquant dans le corps de la requête");
+    }
+
+    $id = $data['id'];
+    $status = $data['status'];
+
+    $result = $controller->updateResourceStatus($id, $status, $token);
 
     http_response_code(isset($result['error']) ? 400 : 200);
     echo json_encode($result);

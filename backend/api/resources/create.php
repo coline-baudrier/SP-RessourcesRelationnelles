@@ -12,9 +12,12 @@ try {
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
 
-    $data = json_decode(file_get_contents('php://input'), true);
+    // Debug: afficher le contenu brut reçu
+    $response = file_get_contents('php://input');
+
+    $data = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception("Format JSON invalide");
+        throw new Exception("Format JSON invalide: " . json_last_error_msg());
     }
 
     $result = $controller->createResource($data, $token);

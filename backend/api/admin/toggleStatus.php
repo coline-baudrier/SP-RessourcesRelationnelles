@@ -9,8 +9,11 @@ try {
 
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
+    
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
 
-    $userId = $_GET['id'] ?? null;
+    $userId = $data['userId'] ?? null;
     if (!$userId) {
         throw new Exception("ID utilisateur manquant");
     }

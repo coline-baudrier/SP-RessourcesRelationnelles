@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../database.php';
+require_once __DIR__ . '/../../../database.php';
 require_once __DIR__ . '/../../controllers/ResourceController.php';
 require_once __DIR__ . '/../../cors-header.php';
 

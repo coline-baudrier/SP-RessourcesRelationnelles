@@ -12,11 +12,16 @@ try {
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
 
-    $id = $_GET['id'] ?? null;
-    if (!$id) {
-        throw new Exception("ID ressource manquant");
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("Format JSON invalide");
     }
 
+    if (!isset($data['id'])) {
+        throw new Exception("ID ressource manquant dans le corps de la requête");
+    }
+
+    $id = $data['id'];
     $result = $controller->deleteResource($id, $token);
 
     http_response_code(isset($result['error']) ? 400 : 200);
