@@ -1,18 +1,28 @@
 {
-    "name": "coline/backend",
-    "autoload": {
-        "psr-4": {
-            "Coline\\Backend\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "coline-baudrier",
-            "email": "coline.baudrier@outlook.com"
-        }
-    ],
-    "require": {
-        "firebase/php-jwt": "^6.11",
-        "vlucas/phpdotenv": "^5.6"
+  "name": "coline/backend",
+  "autoload": {
+    "psr-4": {
+      "": "api/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Coline\\Backend\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "coline-baudrier",
+      "email": "coline.baudrier@outlook.com"
+    }
+  ],
+  "require": {
+    "vlucas/phpdotenv": "^5.6",
+    "firebase/php-jwt": "^6.11",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.0"
+  }
 }
