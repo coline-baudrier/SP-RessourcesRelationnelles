@@ -17,10 +17,7 @@ class CreationRessourcePage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header en haut de page
             const Header(),
-
-            // Contenu principal avec défilement
             Expanded(
               child: Center(
                 child: ConstrainedBox(
@@ -31,7 +28,6 @@ class CreationRessourcePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Bouton de retour (remplace l'AppBar)
                           IconButton(
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () => Navigator.pop(context),
@@ -39,8 +35,6 @@ class CreationRessourcePage extends StatelessWidget {
                             padding: EdgeInsets.zero,
                           ),
                           const SizedBox(height: 10),
-
-                          // Titre de la page
                           const Text(
                             'Ajouter une ressource',
                             style: TextStyle(
@@ -49,8 +43,6 @@ class CreationRessourcePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-
-                          // Titre de la ressource
                           const Text(
                             'Titre',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -64,8 +56,6 @@ class CreationRessourcePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-
-                          // Relation
                           const Text(
                             'Relation',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -88,8 +78,6 @@ class CreationRessourcePage extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 20),
-
-                          // Catégorie
                           const Text(
                             'Catégorie',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -112,8 +100,6 @@ class CreationRessourcePage extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 20),
-
-                          // Statut
                           const Text(
                             'Statut',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -136,8 +122,6 @@ class CreationRessourcePage extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 20),
-
-                          // Contenu
                           const Text(
                             'Contenu',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -154,8 +138,6 @@ class CreationRessourcePage extends StatelessWidget {
                           const SizedBox(height: 30),
                           const Divider(thickness: 1),
                           const SizedBox(height: 20),
-
-                          // Bouton Publier
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -164,7 +146,6 @@ class CreationRessourcePage extends StatelessWidget {
                                 backgroundColor: Color.fromRGBO(0, 0, 145, 1),
                               ),
                               onPressed: () {
-                                // Logique de publication
                               },
                               child: const Text(
                                 'Publier',
@@ -183,8 +164,6 @@ class CreationRessourcePage extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Footer en bas de page
             const Footer(),
           ],
         ),
