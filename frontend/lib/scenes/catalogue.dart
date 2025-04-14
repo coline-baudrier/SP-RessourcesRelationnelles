@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Header.dart';
 import 'package:frontend/widgets/Footer.dart';
+import 'package:frontend/scenes/ressource_detail_page.dart';
 
 class Catalogue extends StatefulWidget {
   const Catalogue({super.key});
@@ -129,47 +130,55 @@ class _CatalogueState extends State<Catalogue> {
                             itemCount: filteredRessources.length,
                             itemBuilder: (context, index) {
                               final ressource = filteredRessources[index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 100,
-                                        width: double.infinity,
-                                        child: Image.asset(
-                                          'assets/images/image.jpg',
-                                          fit: BoxFit.cover,
-                                        ),
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RessourceDetailPage(
+                                        ressourceNom: ressource['nom'],
                                       ),
-                                      Positioned.fill(
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(
-                                            sigmaX: 5,
-                                            sigmaY: 5,
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SizedBox(
+                                          height: 100,
+                                          width: double.infinity,
+                                          child: Image.asset(
+                                            'assets/images/image.jpg',
+                                            fit: BoxFit.cover,
                                           ),
-                                          child: Container(
-                                            color: Colors.black.withOpacity(
-                                              0.2,
+                                        ),
+                                        Positioned.fill(
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5,
+                                            ),
+                                            child: Container(
+                                              color: Color.fromRGBO(0, 0, 0, 0.2),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        ressource['nom'],
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                                        Text(
+                                          ressource['nom'],
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ), 
                               );
                             },
                           ),

@@ -75,14 +75,6 @@ class Footer extends StatelessWidget {
   Widget _buildMobileLayout() {
     return Column(
       children: [
-        // Logo en haut
-        /*Image.asset(
-          'assets/images/republique_francaise_rvb.png',
-          width: 100,
-          height: 100,
-        ),
-        const SizedBox(height: 20),*/
-
         // Les deux colonnes côte à côte
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

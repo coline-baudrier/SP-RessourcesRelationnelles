@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/catalogue.dart';
+import 'package:frontend/scenes/catalogue.dart';
 
 void main() {
   runApp(const MainApp());
