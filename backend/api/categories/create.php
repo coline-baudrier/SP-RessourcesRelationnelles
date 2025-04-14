@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../database.php';
-require_once __DIR__ . '/../../controllers/CategorieController.php';
-require_once __DIR__ . '/../../cors-header.php';
+require_once __DIR__ . '/../controllers/CategorieController.php';
+require_once __DIR__ . '/../cors-header.php';
 
 header('Content-Type: application/json');
 

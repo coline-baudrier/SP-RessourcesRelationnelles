@@ -80,8 +80,8 @@ class CategorieController {
 
     public function delete($data, $token) {
         $auth = $this->checkAuth($token);
-        if ($auth->role !== 'super-admin') {
-            return ["error" => "Action réservée aux super-admins"];
+        if (!in_array($auth->role, ['moderateur', 'super-admin'])) {
+            return ["error" => "Action réservée aux modérateurs ou super-admin"];
         }
 
         if (empty($data['id'])) {
