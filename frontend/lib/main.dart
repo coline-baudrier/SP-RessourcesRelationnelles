@@ -11,12 +11,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Restaurants Relationnelles', // Titre de l'application
+      title: 'Ressources Relationnelles', 
       theme: ThemeData(
-        primarySwatch: Colors.blue, // Couleur principale
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: CreationRessourcePage(), // Remplacez par votre page de connexion
+      home: CreationRessourcePage(),
     );
   }
 }
