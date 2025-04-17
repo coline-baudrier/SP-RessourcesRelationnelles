@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/Footer.dart';
+import 'package:frontend/widgets/Header.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,7 +17,15 @@ class _LoginPageState extends State<LoginPage> {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      body: isMobile ? _buildMobileLayout() : _buildWebLayout(context),
+      body: Column(
+        children: [
+          Header(),
+          Expanded(
+            child: isMobile ? _buildMobileLayout() : _buildWebLayout(context),
+          ),
+          Footer(),
+        ],
+      ),
     );
   }
 
@@ -49,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 image: AssetImage('assets/images/famille.png'),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.3),
+                  Color.fromRGBO(0, 0, 0, 0.7),
                   BlendMode.darken,
                 ),
               ),
