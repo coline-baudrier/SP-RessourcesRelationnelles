@@ -6,6 +6,7 @@ import 'package:frontend/scenes/validation_ressources.dart';
 import 'package:frontend/scenes/profil_page.dart';
 import 'package:frontend/scenes/tableau_de_bord_page.dart';
 import 'package:frontend/scenes/MenuModerPage.dart';
+import 'package:frontend/scenes/creation-ressource.dart';
 
 void main() {
   runApp(const MainApp());
