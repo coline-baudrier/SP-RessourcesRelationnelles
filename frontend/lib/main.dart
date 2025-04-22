@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'scenes/connexion.dart'; // Assurez-vous d'importer votre page de connexion
 import 'package:frontend/scenes/catalogue.dart';
 import 'package:frontend/scenes/IncriptionPage.dart';
+import 'package:frontend/scenes/validation_ressources.dart';
 
 void main() {
   runApp(const MainApp());
