@@ -4,6 +4,7 @@ import 'package:frontend/scenes/catalogue.dart';
 import 'package:frontend/scenes/IncriptionPage.dart';
 import 'package:frontend/scenes/validation_ressources.dart';
 import 'package:frontend/scenes/profil_page.dart';
+import 'package:frontend/scenes/tableau_de_bord_page.dart';
 
 void main() {
   runApp(const MainApp());
