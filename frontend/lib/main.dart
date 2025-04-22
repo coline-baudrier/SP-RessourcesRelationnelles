@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'scenes/connexion.dart'; // Assurez-vous d'importer votre page de connexion
 import 'package:frontend/scenes/catalogue.dart';
 
 void main() {
@@ -10,9 +11,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Catalogue()
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: Catalogue());
   }
 }
