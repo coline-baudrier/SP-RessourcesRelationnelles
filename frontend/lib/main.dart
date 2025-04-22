@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'scenes/connexion.dart'; // Assurez-vous d'importer votre page de connexion
-import 'package:frontend/scenes/catalogue.dart';
-import 'package:frontend/scenes/IncriptionPage.dart';
-import 'package:frontend/scenes/validation_ressources.dart';
-import 'package:frontend/scenes/profil_page.dart';
-import 'package:frontend/scenes/tableau_de_bord_page.dart';
 import 'package:frontend/scenes/MenuModerPage.dart';
+import 'package:frontend/scenes/catalogue.dart';
 import 'package:frontend/scenes/creation-ressource.dart';
+import 'package:frontend/scenes/connexion.dart';
+import 'package:frontend/scenes/TableauBordPage.dart';
+
+import 'package:frontend/scenes/ProfilPage.dart'; // Si tu as une page de connexion
 
 void main() {
   runApp(const MainApp());
@@ -17,6 +16,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Catalogue());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/catalogue',
+      routes: {
+        '/catalogue': (context) => Catalogue(),
+        '/ajouter': (context) => CreationRessourcePage(),
+        '/moderation': (context) => MenuModerPage(),
+        '/profil': (context) => ProfilPage(),
+        '/dashboard': (context) => TableauDeBordPage(),
+        '/login': (context) => LoginPage(),
+      },
+    );
   }
 }

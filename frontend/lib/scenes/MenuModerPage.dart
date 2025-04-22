@@ -3,6 +3,7 @@ import 'package:frontend/widgets/Header.dart';
 import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/scenes/GestionUsersPage.dart';
 import 'package:frontend/scenes/AddUsersPage.dart';
+import 'package:frontend/scenes/ValidationRessourcePage.dart';
 
 class MenuModerPage extends StatelessWidget {
   const MenuModerPage({super.key});
@@ -17,7 +18,7 @@ class MenuModerPage extends StatelessWidget {
       body: Column(
         children: [
           const Header(),
-          const SizedBox(height: 30), // Espace après le header
+          const SizedBox(height: 30),
           const Text("Menu de modération", style: TextStyle(fontSize: 25)),
           const SizedBox(height: 30),
           Expanded(
@@ -40,7 +41,9 @@ class MenuModerPage extends StatelessWidget {
                           text: 'Gestion des ressources',
                           isMobile: isMobile,
                           width: isMobile ? cardWidth : 500,
-                          onTap: () {},
+                          onTap: () {
+                            navigateTo(context, ValidationRessourcesPage());
+                          },
                         ),
                         _MenuCard(
                           icon: Icons.supervised_user_circle_outlined,

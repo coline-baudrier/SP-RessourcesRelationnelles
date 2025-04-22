@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/widgets/Header.dart';
 
-class IncriptionPage extends StatefulWidget {
-  const IncriptionPage({super.key});
+class InscriptionPage extends StatefulWidget {
+  const InscriptionPage({super.key});
 
   @override
-  State<IncriptionPage> createState() => _IncriptionPageState();
+  State<InscriptionPage> createState() => _InscriptionPageState();
 }
 
-class _IncriptionPageState extends State<IncriptionPage> {
+class _InscriptionPageState extends State<InscriptionPage> {
   bool _obscurePassword = true;
 
   final TextEditingController _passwordController = TextEditingController();

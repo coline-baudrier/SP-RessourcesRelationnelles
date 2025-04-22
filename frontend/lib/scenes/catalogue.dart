@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Header.dart';
 import 'package:frontend/widgets/Footer.dart';
-import 'package:frontend/scenes/ressource_detail_page.dart';
+import 'package:frontend/scenes/DetailRessourcePage.dart';
 
 class Catalogue extends StatefulWidget {
   const Catalogue({super.key});
@@ -79,13 +79,23 @@ class _CatalogueState extends State<Catalogue> {
                                         const InputDecorationTheme(
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color.fromRGBO(0, 0, 145, 1),
+                                              color: Color.fromRGBO(
+                                                0,
+                                                0,
+                                                145,
+                                                1,
+                                              ),
                                               width: 2,
                                             ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Color.fromRGBO(0, 0, 145, 1),
+                                              color: Color.fromRGBO(
+                                                0,
+                                                0,
+                                                145,
+                                                1,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -135,14 +145,17 @@ class _CatalogueState extends State<Catalogue> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => RessourceDetailPage(
-                                        ressourceNom: ressource['nom'],
-                                      ),
+                                      builder:
+                                          (context) => RessourceDetailPage(
+                                            ressourceNom: ressource['nom'],
+                                          ),
                                     ),
                                   );
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                  ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Stack(
@@ -163,7 +176,12 @@ class _CatalogueState extends State<Catalogue> {
                                               sigmaY: 5,
                                             ),
                                             child: Container(
-                                              color: Color.fromRGBO(0, 0, 0, 0.2),
+                                              color: Color.fromRGBO(
+                                                0,
+                                                0,
+                                                0,
+                                                0.2,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -178,7 +196,7 @@ class _CatalogueState extends State<Catalogue> {
                                       ],
                                     ),
                                   ),
-                                ), 
+                                ),
                               );
                             },
                           ),

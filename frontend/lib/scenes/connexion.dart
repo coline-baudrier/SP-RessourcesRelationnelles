@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/widgets/Header.dart';
+import 'package:frontend/scenes/InscriptionPage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -154,7 +155,12 @@ class _LoginPageState extends State<LoginPage> {
           const SizedBox(height: 20),
           Center(
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => InscriptionPage()),
+                );
+              },
               child: const Text("Vous n'avez pas de compte ? Créer un compte"),
             ),
           ),

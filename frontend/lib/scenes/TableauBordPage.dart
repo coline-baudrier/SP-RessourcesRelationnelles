@@ -9,17 +9,18 @@ class TableauDeBordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             const Header(),
-            
+
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 600),
@@ -34,12 +35,24 @@ class TableauDeBordPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        
-                        _buildStatItem(Icons.favorite, '+ 52 j\'aimes cette semaine sur vos ressources'),
-                        _buildStatItem(Icons.comment, 'Vous avez commenté 12 fois cette semaine'),
-                        _buildStatItem(Icons.bookmark, 'Vous avez sauvegardez 20 fois cette semaine'),
-                        _buildStatItem(Icons.flag, 'Vous avez signalé 0 fois cette semaine'),
-                        
+
+                        _buildStatItem(
+                          Icons.favorite,
+                          '+ 52 j\'aimes cette semaine sur vos ressources',
+                        ),
+                        _buildStatItem(
+                          Icons.comment,
+                          'Vous avez commenté 12 fois cette semaine',
+                        ),
+                        _buildStatItem(
+                          Icons.bookmark,
+                          'Vous avez sauvegardez 20 fois cette semaine',
+                        ),
+                        _buildStatItem(
+                          Icons.flag,
+                          'Vous avez signalé 0 fois cette semaine',
+                        ),
+
                         const SizedBox(height: 40),
                         const Text(
                           'Tableau de bord',
@@ -81,12 +94,7 @@ class TableauDeBordPage extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.grey),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
         ],
       ),
     );
@@ -133,9 +141,7 @@ class TableauDeBordPage extends StatelessWidget {
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.3),
-                    ),
+                    child: Container(color: Colors.black.withOpacity(0.3)),
                   ),
                 ),
                 // Titre de la ressource

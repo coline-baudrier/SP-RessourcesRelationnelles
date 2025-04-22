@@ -7,27 +7,27 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 800;
-    final isMediumScreen = screenWidth < 1304 && screenWidth >= 800;
 
     return Column(
       children: [
-        // Partie supérieure avec logo et titre
+        // Header pour les écrans desktop et mobile
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: isDesktop ? 40 : 16,
             vertical: 10,
           ),
           child:
-              isDesktop ? _buildDesktopHeader() : _buildMobileHeader(context),
+              isDesktop
+                  ? _buildDesktopHeader(context)
+                  : _buildMobileHeader(context),
         ),
-
-        // Barre de navigation
-        if (isDesktop) _buildResponsiveNavBar(context, isMediumScreen),
+        if (isDesktop)
+          _buildNavBar(context), // Barre de navigation pour les écrans desktop
       ],
     );
   }
 
-  Widget _buildDesktopHeader() {
+  Widget _buildDesktopHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -54,12 +54,20 @@ class Header extends StatelessWidget {
             ),
           ],
         ),
-        const Row(
-          children: [
-            Icon(Icons.person_outline),
-            SizedBox(width: 8),
-            Text("Se connecter", style: TextStyle(fontSize: 18)),
-          ],
+        InkWell(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              '/login',
+            ); // Lien vers la page de connexion
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.person_outline),
+              SizedBox(width: 8),
+              Text("Se connecter", style: TextStyle(fontSize: 18)),
+            ],
+          ),
         ),
       ],
     );
@@ -82,18 +90,7 @@ class Header extends StatelessWidget {
     );
   }
 
-  Widget _buildResponsiveNavBar(BuildContext context, bool isMediumScreen) {
-    final navItems = [
-      _NavItem(null, "Catalogue des Ressources", "Catalogue"),
-      _NavItem(null, "Ajouter une ressource", "Ajouter"),
-      _NavItem(null, "Modération", "Modération"),
-      _NavItem(null, "Accessibilité", "Accessibilité"),
-      _NavItem(null, "Profil", "Profil"),
-      _NavItem(null, "Tableau de bord", "Tableau"),
-      _NavItem(null, "Contactez nous", "Contact"),
-      _NavItem(null, "Aide", "Aide"),
-    ];
-
+  Widget _buildNavBar(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         border: Border(
@@ -101,28 +98,24 @@ class Header extends StatelessWidget {
           bottom: BorderSide(width: 1, color: Colors.grey),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                    navItems.map((item) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: _buildNavItem(
-                          item.icon,
-                          isMediumScreen ? item.shortLabel : item.fullLabel,
-                          tooltip: item.fullLabel,
-                          fontSize: 16,
-                        ),
-                      );
-                    }).toList(),
-              ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildNavItem(context, "Catalogue", '/catalogue'),
+                _buildNavItem(context, "Ajouter une Ressource", '/ajouter'),
+                _buildNavItem(context, "Modération", '/moderation'),
+                _buildNavItem(context, "Accessibilité", '/accessibilite'),
+                _buildNavItem(context, "Profil", '/profil'),
+                _buildNavItem(context, "Tableau de bord", '/dashboard'),
+                _buildNavItem(context, "Contactez-nous", '/contact'),
+                _buildNavItem(context, "Aide", '/aide'),
+              ],
             ),
           ),
         ),
@@ -131,30 +124,23 @@ class Header extends StatelessWidget {
   }
 
   Widget _buildNavItem(
-    IconData? icon,
-    String label, {
-    String? tooltip,
-    double fontSize = 16,
+    BuildContext context,
+    String label,
+    String route, {
+    bool isBold = false,
   }) {
-    return Tooltip(
-      message: tooltip,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () {},
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) Icon(icon, size: fontSize + 2),
-              if (icon != null) const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  overflow: TextOverflow.visible,
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: Colors.black, // Le texte reste en noir
           ),
         ),
       ),
@@ -175,78 +161,56 @@ class Header extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.85,
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Menu',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Menu",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
+                const Divider(),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      _buildMobileMenuItem(
+                      _menuItem(context, Icons.book, "Catalogue", '/catalogue'),
+                      _menuItem(
                         context,
-                        Icons.book_outlined,
-                        "Catalogue des Ressources",
-                      ),
-                      _buildMobileMenuItem(
-                        context,
-                        Icons.add_circle_outline,
+                        Icons.add,
                         "Ajouter une Ressource",
+                        '/ajouter',
                       ),
-                      _buildMobileMenuItem(
+                      _menuItem(
                         context,
-                        Icons.admin_panel_settings_outlined,
+                        Icons.admin_panel_settings,
                         "Modération",
+                        '/moderation',
                       ),
-                      _buildMobileMenuItem(
+                      _menuItem(
                         context,
-                        Icons.person_outline,
-                        "Profil",
-                      ),
-                      _buildMobileMenuItem(
-                        context,
-                        Icons.dashboard_outlined,
-                        "Tableau de bord",
-                      ),
-                      _buildMobileMenuItem(
-                        context,
-                        Icons.mail_outline,
-                        "Contactez nous",
-                      ),
-                      _buildMobileMenuItem(
-                        context,
-                        Icons.accessibility_outlined,
+                        Icons.accessibility,
                         "Accessibilité",
+                        '/accessibilite',
                       ),
-                      _buildMobileMenuItem(context, Icons.help_outline, "Aide"),
-                      const SizedBox(height: 16),
-                      _buildMobileMenuItem(
+                      _menuItem(context, Icons.person, "Profil", '/profil'),
+                      _menuItem(
+                        context,
+                        Icons.dashboard,
+                        "Tableau de bord",
+                        '/dashboard',
+                      ),
+                      _menuItem(
+                        context,
+                        Icons.mail,
+                        "Contactez-nous",
+                        '/contact',
+                      ),
+                      _menuItem(context, Icons.help, "Aide", '/aide'),
+                      _menuItem(
                         context,
                         Icons.login,
                         "Se connecter",
+                        '/login',
                         color: Colors.blue,
-                        isBold: true,
                       ),
-                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -258,34 +222,23 @@ class Header extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileMenuItem(
+  Widget _menuItem(
     BuildContext context,
     IconData icon,
-    String label, {
+    String label,
+    String route, {
     Color color = Colors.black,
-    bool isBold = false,
   }) {
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
+      title: Text(label, style: TextStyle(color: color)),
       onTap: () {
-        Navigator.pop(context);
-        // Navigation à implémenter
+        Navigator.pop(context); // Ferme le menu mobile
+        Navigator.pushNamed(
+          context,
+          route,
+        ); // Navigue vers la page correspondante
       },
     );
   }
-}
-
-class _NavItem {
-  final IconData? icon;
-  final String fullLabel;
-  final String shortLabel;
-
-  _NavItem(this.icon, this.fullLabel, this.shortLabel);
 }
