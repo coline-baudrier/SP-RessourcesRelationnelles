@@ -3,6 +3,7 @@ import 'scenes/connexion.dart'; // Assurez-vous d'importer votre page de connexi
 import 'package:frontend/scenes/catalogue.dart';
 import 'package:frontend/scenes/IncriptionPage.dart';
 import 'package:frontend/scenes/validation_ressources.dart';
+import 'package:frontend/scenes/profil_page.dart';
 
 void main() {
   runApp(const MainApp());
