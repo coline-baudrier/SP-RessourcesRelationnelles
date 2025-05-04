@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/services/auth_provider.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -7,6 +9,7 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 800;
+    final authProvider = Provider.of<AuthProvider>(context);
 
     return Column(
       children: [
@@ -18,16 +21,19 @@ class Header extends StatelessWidget {
           ),
           child:
               isDesktop
-                  ? _buildDesktopHeader(context)
-                  : _buildMobileHeader(context),
+                  ? _buildDesktopHeader(context, authProvider)
+                  : _buildMobileHeader(context, authProvider),
         ),
         if (isDesktop)
-          _buildNavBar(context), // Barre de navigation pour les écrans desktop
+          _buildNavBar(
+            context,
+            authProvider,
+          ), // Barre de navigation pour les écrans desktop
       ],
     );
   }
 
-  Widget _buildDesktopHeader(BuildContext context) {
+  Widget _buildDesktopHeader(BuildContext context, AuthProvider authProvider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -54,26 +60,42 @@ class Header extends StatelessWidget {
             ),
           ],
         ),
-        InkWell(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/login',
-            ); // Lien vers la page de connexion
-          },
-          child: const Row(
+        // Afficher bouton de connexion si non connecté
+        if (!authProvider.isAuthenticated)
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, '/login');
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.person_outline),
+                SizedBox(width: 8),
+                Text("Se connecter", style: TextStyle(fontSize: 18)),
+              ],
+            ),
+          ),
+        // Afficher nom d'utilisateur si connecté
+        if (authProvider.isAuthenticated)
+          Row(
             children: [
-              Icon(Icons.person_outline),
-              SizedBox(width: 8),
-              Text("Se connecter", style: TextStyle(fontSize: 18)),
+              Text(
+                'Bonjour, ${authProvider.user?.prenom}',
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(width: 10),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/profil');
+                },
+                child: const Icon(Icons.person),
+              ),
             ],
           ),
-        ),
       ],
     );
   }
 
-  Widget _buildMobileHeader(BuildContext context) {
+  Widget _buildMobileHeader(BuildContext context, AuthProvider authProvider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -84,13 +106,13 @@ class Header extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.menu, size: 32),
-          onPressed: () => _showMobileMenu(context),
+          onPressed: () => _showMobileMenu(context, authProvider),
         ),
       ],
     );
   }
 
-  Widget _buildNavBar(BuildContext context) {
+  Widget _buildNavBar(BuildContext context, AuthProvider authProvider) {
     return Container(
       decoration: const BoxDecoration(
         border: Border(
@@ -108,13 +130,17 @@ class Header extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildNavItem(context, "Catalogue", '/catalogue'),
-                _buildNavItem(context, "Ajouter une Ressource", '/ajouter'),
-                _buildNavItem(context, "Modération", '/moderation'),
-                _buildNavItem(context, "Accessibilité", '/accessibilite'),
-                _buildNavItem(context, "Profil", '/profil'),
-                _buildNavItem(context, "Tableau de bord", '/dashboard'),
-                _buildNavItem(context, "Contactez-nous", '/contact'),
-                _buildNavItem(context, "Aide", '/aide'),
+                if (authProvider.isAuthenticated)
+                  _buildNavItem(context, "Ajouter une Ressource", '/ajouter'),
+                if (authProvider.user?.role == 'moderateur' ||
+                    authProvider.user?.role == 'super_admin')
+                  _buildNavItem(context, "Modération", '/moderation'),
+                if (authProvider.isAuthenticated)
+                  _buildNavItem(context, "Profil", '/profil'),
+                if (authProvider.isAuthenticated)
+                  _buildNavItem(context, "Tableau de bord", '/dashboard'),
+                if (!authProvider.isAuthenticated)
+                  _buildNavItem(context, "Se connecter", '/login'),
               ],
             ),
           ),
@@ -147,7 +173,7 @@ class Header extends StatelessWidget {
     );
   }
 
-  void _showMobileMenu(BuildContext context) {
+  void _showMobileMenu(BuildContext context, AuthProvider authProvider) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -172,31 +198,36 @@ class Header extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
                       _menuItem(context, Icons.book, "Catalogue", '/catalogue'),
-                      _menuItem(
-                        context,
-                        Icons.add,
-                        "Ajouter une Ressource",
-                        '/ajouter',
-                      ),
-                      _menuItem(
-                        context,
-                        Icons.admin_panel_settings,
-                        "Modération",
-                        '/moderation',
-                      ),
+                      if (authProvider.isAuthenticated)
+                        _menuItem(
+                          context,
+                          Icons.add,
+                          "Ajouter une Ressource",
+                          '/ajouter',
+                        ),
+                      if (authProvider.user?.role == 'moderateur' ||
+                          authProvider.user?.role == 'super_admin')
+                        _menuItem(
+                          context,
+                          Icons.admin_panel_settings,
+                          "Modération",
+                          '/moderation',
+                        ),
                       _menuItem(
                         context,
                         Icons.accessibility,
                         "Accessibilité",
                         '/accessibilite',
                       ),
-                      _menuItem(context, Icons.person, "Profil", '/profil'),
-                      _menuItem(
-                        context,
-                        Icons.dashboard,
-                        "Tableau de bord",
-                        '/dashboard',
-                      ),
+                      if (authProvider.isAuthenticated)
+                        _menuItem(context, Icons.person, "Profil", '/profil'),
+                      if (authProvider.isAuthenticated)
+                        _menuItem(
+                          context,
+                          Icons.dashboard,
+                          "Tableau de bord",
+                          '/dashboard',
+                        ),
                       _menuItem(
                         context,
                         Icons.mail,
@@ -204,13 +235,14 @@ class Header extends StatelessWidget {
                         '/contact',
                       ),
                       _menuItem(context, Icons.help, "Aide", '/aide'),
-                      _menuItem(
-                        context,
-                        Icons.login,
-                        "Se connecter",
-                        '/login',
-                        color: Colors.blue,
-                      ),
+                      if (!authProvider.isAuthenticated)
+                        _menuItem(
+                          context,
+                          Icons.login,
+                          "Se connecter",
+                          '/login',
+                          color: Colors.blue,
+                        ),
                     ],
                   ),
                 ),

@@ -2,7 +2,10 @@
 // Autorisation de l'origine des requêtes
 $allowedOrigins = [
     'http://10.0.2.2', // Ajoutez aussi l'URL HTTP si nécessaire
-    'http://192.168.1.10'
+    'http://192.168.1.10',
+    '*',
+    'http://localhost:8000',
+    'http://localhost:35889'
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

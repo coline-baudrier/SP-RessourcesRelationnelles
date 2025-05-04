@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/widgets/Header.dart';
 import 'package:frontend/scenes/InscriptionPage.dart';
+import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/auth_provider.dart';
+import 'package:frontend/models/user.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +16,51 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez remplir tous les champs')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await AuthService.login(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      authProvider.login(response['token'], User.fromJson(response['user']));
+
+      // Redirection basée sur le rôle
+      final role = response['user']['role'];
+      if (role == 'super_admin' || role == 'moderateur') {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        Navigator.pushReplacementNamed(context, '/catalogue');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +69,11 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Column(
         children: [
-          Header(),
+          const Header(),
           Expanded(
             child: isMobile ? _buildMobileLayout() : _buildWebLayout(context),
           ),
-          Footer(),
+          const Footer(),
         ],
       ),
     );
@@ -52,10 +101,9 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        // Image à droite en version web
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/famille.png'),
                 fit: BoxFit.cover,
@@ -86,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              shadows: [Shadow(blurRadius: 10, color: Colors.black)],
+              shadows: const [Shadow(blurRadius: 10, color: Colors.black)],
             ),
           ),
         ),
@@ -102,24 +150,27 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Text(
             'Connexion à Ressources Relationnelles',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          Text(
+          const Text(
             'Se connecter avec son compte',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          const TextField(
-            decoration: InputDecoration(
-              labelText: 'Identifiant',
+          TextField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 15),
           TextField(
+            controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
               labelText: 'Mot de passe',
@@ -146,11 +197,14 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: _isLoading ? null : _handleLogin,
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 15),
             ),
-            child: const Text('Se connecter'),
+            child:
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Se connecter'),
           ),
           const SizedBox(height: 20),
           Center(
@@ -166,26 +220,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class DividerWithText extends StatelessWidget {
-  final String text;
-
-  const DividerWithText({super.key, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider()),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(text),
-        ),
-        const Expanded(child: Divider()),
-      ],
     );
   }
 }

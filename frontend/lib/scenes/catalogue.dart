@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/Header.dart';
 import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/scenes/DetailRessourcePage.dart';
+import 'package:frontend/services/resource_service.dart';
+import 'package:frontend/models/resource.dart';
 
 class Catalogue extends StatefulWidget {
   const Catalogue({super.key});
@@ -12,20 +14,31 @@ class Catalogue extends StatefulWidget {
 }
 
 class _CatalogueState extends State<Catalogue> {
-  final List<Map<String, dynamic>> ressources = [
-    {'nom': 'Ressource 1'},
-    {'nom': 'Ressource 2'},
-    {'nom': 'Ressource 3'},
-    {'nom': 'Ressource 4'},
-  ];
-
-  List<Map<String, dynamic>> filteredRessources = [];
+  List<Resource> ressources = [];
+  List<Resource> filteredRessources = [];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    filteredRessources = ressources;
+    _loadResources();
+  }
+
+  Future<void> _loadResources() async {
+    try {
+      final resources = await ResourceService.fetchResources();
+      setState(() {
+        ressources = resources;
+        filteredRessources = ressources;
+      });
+    } catch (e) {
+      // Gestion simple des erreurs (vous pouvez l'adapter selon vos besoins)
+      print('Erreur de chargement: $e');
+      setState(() {
+        ressources = [];
+        filteredRessources = [];
+      });
+    }
   }
 
   void filterRessources(String query) {
@@ -34,7 +47,7 @@ class _CatalogueState extends State<Catalogue> {
           ressources
               .where(
                 (item) =>
-                    item['nom'].toLowerCase().contains(query.toLowerCase()),
+                    item.titre.toLowerCase().contains(query.toLowerCase()),
               )
               .toList();
     });
@@ -147,7 +160,9 @@ class _CatalogueState extends State<Catalogue> {
                                     MaterialPageRoute(
                                       builder:
                                           (context) => RessourceDetailPage(
-                                            ressourceNom: ressource['nom'],
+                                            resourceId:
+                                                ressource
+                                                    .id, // Changé de ressourceNom à resourceId
                                           ),
                                     ),
                                   );
@@ -186,7 +201,7 @@ class _CatalogueState extends State<Catalogue> {
                                           ),
                                         ),
                                         Text(
-                                          ressource['nom'],
+                                          ressource.titre,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 20,

@@ -11,39 +11,40 @@ class User
     }
 
     public function authenticate($email, $password)
-    {
-        try {
-            $user = $this->getUserByEmail($email);
-            
-            if (!$user) {
-                error_log("Utilisateur non trouvé: " . $email);
-                return ["error" => "Email ou mot de passe incorrect"];
-            }
-
-            // Debug: Enregistrez ce que vous comparez
-            error_log("Comparaison pour: " . $email);
-            error_log("Mot de passe fourni: " . $password);
-            error_log("Mot de passe stocké: " . $user['mot_de_passe']);
-            error_log("Résultat verification: " . (password_verify($password, $user['mot_de_passe']) ? 'true' : 'false'));
-
-            if (!password_verify($password, $user['mot_de_passe'])) {
-                return ["error" => "Email ou mot de passe incorrect"];
-            }
-
-            if (!$user['compte_actif']) {
-                return ["error" => "Compte désactivé"];
-            }
-
-            $this->updateLastLogin($user['id_utilisateur']);
-            unset($user['mot_de_passe']);
-            
-            return $user;
-
-        } catch (PDOException $e) {
-            error_log("Erreur d'authentification: " . $e->getMessage());
-            return ["error" => "Erreur lors de l'authentification"];
+{
+    try {
+        $user = $this->getUserByEmail($email);
+        
+        if (!$user) {
+            error_log("Utilisateur non trouvé: " . $email);
+            return ["error" => "Email ou mot de passe incorrect"];
         }
+
+        // Comparaison directe du mot de passe sans hachage
+        error_log("Comparaison pour: " . $email);
+        error_log("Mot de passe fourni: " . $password);
+        error_log("Mot de passe stocké: " . $user['mot_de_passe']);
+        error_log("Résultat verification: " . ($password === $user['mot_de_passe'] ? 'true' : 'false'));
+
+        if ($password !== $user['mot_de_passe']) {
+            return ["error" => "Email ou mot de passe incorrect"];
+        }
+
+        if (!$user['compte_actif']) {
+            return ["error" => "Compte désactivé"];
+        }
+
+        $this->updateLastLogin($user['id_utilisateur']);
+        unset($user['mot_de_passe']);
+        
+        return $user;
+
+    } catch (PDOException $e) {
+        error_log("Erreur d'authentification: " . $e->getMessage());
+        return ["error" => "Erreur lors de l'authentification"];
     }
+}
+
 
     public function createUser($email, $password, $nom, $prenom, $role = 'citoyen')
     {

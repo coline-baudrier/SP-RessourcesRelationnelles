@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../../database.php';
 require_once __DIR__ . '/../controllers/ResourceController.php';
 require_once __DIR__ . '/../cors-header.php';
@@ -12,10 +13,9 @@ try {
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
 
-    // Debug: afficher le contenu brut reçu
     $response = file_get_contents('php://input');
-
     $data = json_decode($response, true);
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception("Format JSON invalide: " . json_last_error_msg());
     }
