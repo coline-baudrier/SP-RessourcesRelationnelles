@@ -13,7 +13,6 @@ class Header extends StatelessWidget {
 
     return Column(
       children: [
-        // Header pour les écrans desktop et mobile
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: isDesktop ? 40 : 16,
@@ -24,11 +23,7 @@ class Header extends StatelessWidget {
                   ? _buildDesktopHeader(context, authProvider)
                   : _buildMobileHeader(context, authProvider),
         ),
-        if (isDesktop)
-          _buildNavBar(
-            context,
-            authProvider,
-          ), // Barre de navigation pour les écrans desktop
+        if (isDesktop) _buildNavBar(context, authProvider),
       ],
     );
   }
@@ -60,7 +55,6 @@ class Header extends StatelessWidget {
             ),
           ],
         ),
-        // Afficher bouton de connexion si non connecté
         if (!authProvider.isAuthenticated)
           InkWell(
             onTap: () {
@@ -74,7 +68,6 @@ class Header extends StatelessWidget {
               ],
             ),
           ),
-        // Afficher nom d'utilisateur si connecté
         if (authProvider.isAuthenticated)
           Row(
             children: [
@@ -88,6 +81,12 @@ class Header extends StatelessWidget {
                   Navigator.pushNamed(context, '/profil');
                 },
                 child: const Icon(Icons.person),
+              ),
+              const SizedBox(width: 10),
+              IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: 'Déconnexion',
+                onPressed: () => _confirmLogout(context, authProvider),
               ),
             ],
           ),
@@ -110,6 +109,42 @@ class Header extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _confirmLogout(
+    BuildContext context,
+    AuthProvider authProvider,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirmer la déconnexion'),
+            content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  'Déconnexion',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed == true) {
+      authProvider.logout();
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/',
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   Widget _buildNavBar(BuildContext context, AuthProvider authProvider) {
@@ -137,7 +172,7 @@ class Header extends StatelessWidget {
                   _buildNavItem(context, "Modération", '/moderation'),
                 if (authProvider.isAuthenticated)
                   _buildNavItem(context, "Profil", '/profil'),
-                if (authProvider.isAuthenticated)
+                if (authProvider.user?.role == 'citoyen')
                   _buildNavItem(context, "Tableau de bord", '/dashboard'),
                 if (!authProvider.isAuthenticated)
                   _buildNavItem(context, "Se connecter", '/login'),
@@ -166,7 +201,7 @@ class Header extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            color: Colors.black, // Le texte reste en noir
+            color: Colors.black,
           ),
         ),
       ),
@@ -235,6 +270,18 @@ class Header extends StatelessWidget {
                         '/contact',
                       ),
                       _menuItem(context, Icons.help, "Aide", '/aide'),
+                      if (authProvider.isAuthenticated)
+                        _menuItem(
+                          context,
+                          Icons.logout,
+                          "Se déconnecter",
+                          '',
+                          color: Colors.red,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await _confirmLogout(context, authProvider);
+                          },
+                        ),
                       if (!authProvider.isAuthenticated)
                         _menuItem(
                           context,
@@ -260,17 +307,19 @@ class Header extends StatelessWidget {
     String label,
     String route, {
     Color color = Colors.black,
+    Function()? onTap,
   }) {
     return ListTile(
       leading: Icon(icon, color: color),
       title: Text(label, style: TextStyle(color: color)),
-      onTap: () {
-        Navigator.pop(context); // Ferme le menu mobile
-        Navigator.pushNamed(
-          context,
-          route,
-        ); // Navigue vers la page correspondante
-      },
+      onTap:
+          onTap ??
+          () {
+            Navigator.pop(context);
+            if (route.isNotEmpty) {
+              Navigator.pushNamed(context, route);
+            }
+          },
     );
   }
 }

@@ -11,6 +11,9 @@ try {
 
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? null;
+    
+    // Log du token reçu
+    error_log("Token reçu: " . $token);
 
     $result = $controller->getPendingResources($token);
 
