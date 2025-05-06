@@ -146,32 +146,39 @@ class UserController
     }
 
     // Créer un administrateur (super_admin seulement)
-    public function createAdmin($token, $data)
-    {
-        $auth = $this->checkAuth($token);
-        if (isset($auth->error)) {
-            return ["error" => $auth->error];
-        }
-
-        if ($auth->role !== 'super_admin') {
-            return ["error" => "Accès refusé: rôle insuffisant"];
-        }
-
-        $required = ['email', 'password', 'nom', 'prenom'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
-                return ["error" => "Le champ $field est requis"];
-            }
-        }
-
-        return $this->userModel->createUser(
-            $data['email'],
-            $data['password'],
-            $data['nom'],
-            $data['prenom'],
-            'super_admin' // Rôle forcé pour les admins créés ainsi
-        );
+public function createAdmin($token, $data)
+{
+    $auth = $this->checkAuth($token);
+    if (isset($auth->error)) {
+        return ["error" => $auth->error];
     }
+
+    // Seul un super_admin peut créer des utilisateurs
+    if ($auth->role !== 'super_admin') {
+        return ["error" => "Accès refusé: rôle insuffisant"];
+    }
+
+    $required = ['email', 'password', 'nom', 'prenom', 'role'];
+    foreach ($required as $field) {
+        if (empty($data[$field])) {
+            return ["error" => "Le champ $field est requis"];
+        }
+    }
+
+    // Validation du rôle
+    $allowedRoles = ['citoyen', 'moderateur', 'super_admin'];
+    if (!in_array($data['role'], $allowedRoles)) {
+        return ["error" => "Rôle invalide"];
+    }
+
+    return $this->userModel->createUser(
+        $data['email'],
+        $data['password'],
+        $data['nom'],
+        $data['prenom'],
+        $data['role']
+    );
+}
 
     // Mettre à jour le rôle d'un utilisateur (super_admin seulement)
     public function updateRole($token, $userId, $newRole)
