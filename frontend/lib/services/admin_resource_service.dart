@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/resource.dart';
 
 class AdminResourceService {
-  static const String _baseUrl = 'http://localhost:8000/resources/admin';
+  static const String _baseUrl = 'http://79.137.33.245:9000/resources/admin';
 
   static Future<List<Resource>> getPendingResources(String token) async {
     final response = await http.get(

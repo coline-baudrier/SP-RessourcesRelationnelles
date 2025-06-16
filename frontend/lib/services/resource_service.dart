@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/resource.dart';
 
 class ResourceService {
-  static const String _baseUrl = 'http://localhost:8000/resources';
+  static const String _baseUrl = 'http://79.137.33.245:9000/resources';
 
   static Future<List<Resource>> fetchResources() async {
     try {
@@ -67,7 +67,7 @@ class ResourceService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/resources/create.php'),
+        Uri.parse('http://79.137.33.245:9000/resources/create.php'),
         headers: {'Authorization': token, 'Content-Type': 'application/json'},
         body: json.encode({
           'titre': titre,
