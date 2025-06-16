@@ -5,6 +5,7 @@ import 'package:frontend/widgets/Footer.dart';
 import 'package:frontend/services/admin_user_service.dart';
 import 'package:frontend/services/auth_provider.dart';
 
+// Page d'ajout d'utilisateur avec formulaire
 class AddUserPage extends StatefulWidget {
   const AddUserPage({super.key});
 
@@ -13,20 +14,28 @@ class AddUserPage extends StatefulWidget {
 }
 
 class _AddUserPageState extends State<AddUserPage> {
+  // Clé pour valider le formulaire
   final _formKey = GlobalKey<FormState>();
+
+  // Contrôleurs pour les champs de texte
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nomController = TextEditingController();
   final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
+  // Valeur sélectionnée dans la liste des rôles
   String _selectedRole = 'citoyen';
+
+  // Indicateur de chargement
   bool _isLoading = false;
+
+  // Liste des rôles disponibles
   final List<String> _roles = ['citoyen', 'moderateur', 'super_admin'];
 
   @override
   void dispose() {
+    // Libération des ressources des contrôleurs à la destruction du widget
     _emailController.dispose();
     _nomController.dispose();
     _prenomController.dispose();
@@ -35,9 +44,12 @@ class _AddUserPageState extends State<AddUserPage> {
     super.dispose();
   }
 
+  // Fonction appelée lors de la soumission du formulaire
   Future<void> _submitForm(BuildContext context) async {
+    // Validation du formulaire
     if (!_formKey.currentState!.validate()) return;
 
+    // Vérification de la correspondance des mots de passe
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
@@ -48,8 +60,10 @@ class _AddUserPageState extends State<AddUserPage> {
     setState(() => _isLoading = true);
 
     try {
+      // Récupération du token via le provider d'authentification
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+      // Appel du service pour créer un utilisateur
       await AdminUserService.createUser(
         authProvider.token!,
         _emailController.text,
@@ -59,14 +73,17 @@ class _AddUserPageState extends State<AddUserPage> {
         _selectedRole,
       );
 
+      // Affichage d'un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Utilisateur créé avec succès')),
       );
-      Navigator.pop(context, true); // Retour avec succès
+
+      Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erreur: ${e.toString()}')));
+      // Affichage de l'erreur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur: ${e.toString()}')),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -87,6 +104,7 @@ class _AddUserPageState extends State<AddUserPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Champ Email
                       TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(labelText: 'Email'),
@@ -98,6 +116,7 @@ class _AddUserPageState extends State<AddUserPage> {
                         },
                         keyboardType: TextInputType.emailAddress,
                       ),
+                      // Champ Nom
                       TextFormField(
                         controller: _nomController,
                         decoration: const InputDecoration(labelText: 'Nom'),
@@ -108,6 +127,7 @@ class _AddUserPageState extends State<AddUserPage> {
                           return null;
                         },
                       ),
+                      // Champ Prénom
                       TextFormField(
                         controller: _prenomController,
                         decoration: const InputDecoration(labelText: 'Prénom'),
@@ -119,21 +139,24 @@ class _AddUserPageState extends State<AddUserPage> {
                         },
                       ),
                       const SizedBox(height: 8),
+
+                      // Champs de mot de passe et confirmation
                       _PasswordFields(
                         passwordController: _passwordController,
                         confirmPasswordController: _confirmPasswordController,
                       ),
                       const SizedBox(height: 8),
+
+                      // Sélection du rôle
                       DropdownButtonFormField<String>(
                         value: _selectedRole,
                         decoration: const InputDecoration(labelText: 'Rôle'),
-                        items:
-                            _roles.map((role) {
-                              return DropdownMenuItem(
-                                value: role,
-                                child: Text(role),
-                              );
-                            }).toList(),
+                        items: _roles.map((role) {
+                          return DropdownMenuItem(
+                            value: role,
+                            child: Text(role),
+                          );
+                        }).toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedRole = value!;
@@ -146,7 +169,10 @@ class _AddUserPageState extends State<AddUserPage> {
                           return null;
                         },
                       ),
+
                       const SizedBox(height: 16),
+
+                      // Bouton de validation
                       Center(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -157,17 +183,13 @@ class _AddUserPageState extends State<AddUserPage> {
                               horizontal: 40,
                             ),
                           ),
-                          onPressed:
-                              _isLoading ? null : () => _submitForm(context),
-                          child:
-                              _isLoading
-                                  ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                  : const Text(
-                                    'Ajouter',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                          onPressed: _isLoading ? null : () => _submitForm(context),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'Ajouter',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                         ),
                       ),
                     ],
@@ -176,7 +198,6 @@ class _AddUserPageState extends State<AddUserPage> {
               ),
             ),
           ),
-
           const Footer(),
         ],
       ),
@@ -184,6 +205,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }
 }
 
+// Widget dédié à la gestion des champs de mot de passe
 class _PasswordFields extends StatefulWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
@@ -198,6 +220,7 @@ class _PasswordFields extends StatefulWidget {
 }
 
 class _PasswordFieldsState extends State<_PasswordFields> {
+  // Gestion de la visibilité des champs
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -205,15 +228,14 @@ class _PasswordFieldsState extends State<_PasswordFields> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Champ mot de passe
         TextFormField(
           controller: widget.passwordController,
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             labelText: 'Mot de passe',
             suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility : Icons.visibility_off,
-              ),
+              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
@@ -232,17 +254,14 @@ class _PasswordFieldsState extends State<_PasswordFields> {
           },
         ),
         const SizedBox(height: 8),
+        // Champ confirmation du mot de passe
         TextFormField(
           controller: widget.confirmPasswordController,
           obscureText: _obscureConfirmPassword,
           decoration: InputDecoration(
             labelText: 'Confirmer le mot de passe',
             suffixIcon: IconButton(
-              icon: Icon(
-                _obscureConfirmPassword
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-              ),
+              icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () {
                 setState(() {
                   _obscureConfirmPassword = !_obscureConfirmPassword;

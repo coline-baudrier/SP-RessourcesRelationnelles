@@ -14,9 +14,9 @@ class Catalogue extends StatefulWidget {
 }
 
 class _CatalogueState extends State<Catalogue> {
-  List<Resource> ressources = [];
-  List<Resource> filteredRessources = [];
-  TextEditingController searchController = TextEditingController();
+  List<Resource> ressources = []; // Liste complète des ressources chargées
+  List<Resource> filteredRessources = []; // Liste filtrée selon la recherche
+  TextEditingController searchController = TextEditingController(); // Contrôleur pour le champ de recherche
 
   @override
   void initState() {
@@ -24,6 +24,7 @@ class _CatalogueState extends State<Catalogue> {
     _loadResources();
   }
 
+  // Fonction pour charger les ressources depuis le service
   Future<void> _loadResources() async {
     try {
       final resources = await ResourceService.fetchResources();
@@ -32,7 +33,7 @@ class _CatalogueState extends State<Catalogue> {
         filteredRessources = ressources;
       });
     } catch (e) {
-      // Gestion simple des erreurs (vous pouvez l'adapter selon vos besoins)
+      // En cas d'erreur, affichage dans la console et réinitialisation des listes
       print('Erreur de chargement: $e');
       setState(() {
         ressources = [];
@@ -41,15 +42,12 @@ class _CatalogueState extends State<Catalogue> {
     }
   }
 
+  // Fonction appelée à chaque modification du champ de recherche
   void filterRessources(String query) {
     setState(() {
-      filteredRessources =
-          ressources
-              .where(
-                (item) =>
-                    item.titre.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
+      filteredRessources = ressources
+          .where((item) => item.titre.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
@@ -60,19 +58,19 @@ class _CatalogueState extends State<Catalogue> {
         child: Column(
           children: [
             const Header(),
+
+            // Corps principal de la page
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 20,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 700),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Titre du catalogue
                           const Center(
                             child: Text(
                               "Catalogue des ressources",
@@ -83,49 +81,39 @@ class _CatalogueState extends State<Catalogue> {
                             ),
                           ),
                           const SizedBox(height: 20),
+
+                          // Barre de recherche + bouton filtre (inactif pour l’instant)
                           Row(
                             children: [
                               Expanded(
                                 child: Theme(
                                   data: Theme.of(context).copyWith(
-                                    inputDecorationTheme:
-                                        const InputDecorationTheme(
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color.fromRGBO(
-                                                0,
-                                                0,
-                                                145,
-                                                1,
-                                              ),
-                                              width: 2,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color.fromRGBO(
-                                                0,
-                                                0,
-                                                145,
-                                                1,
-                                              ),
-                                            ),
-                                          ),
+                                    inputDecorationTheme: const InputDecorationTheme(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color.fromRGBO(0, 0, 145, 1),
+                                          width: 2,
                                         ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color.fromRGBO(0, 0, 145, 1),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                   child: TextField(
                                     controller: searchController,
                                     onChanged: filterRessources,
                                     decoration: const InputDecoration(
                                       hintText: "Rechercher une ressource",
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                      ),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
                                     ),
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 10),
+                              // Bouton filtre
                               Container(
                                 height: 48,
                                 decoration: BoxDecoration(
@@ -147,6 +135,8 @@ class _CatalogueState extends State<Catalogue> {
                             ],
                           ),
                           const SizedBox(height: 20),
+
+                          // Liste des ressources affichées
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -155,27 +145,24 @@ class _CatalogueState extends State<Catalogue> {
                               final ressource = filteredRessources[index];
                               return InkWell(
                                 onTap: () {
+                                  // Redirection vers la page de détail de la ressource
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) => RessourceDetailPage(
-                                            resourceId:
-                                                ressource
-                                                    .id, // Changé de ressourceNom à resourceId
-                                          ),
+                                      builder: (context) => RessourceDetailPage(
+                                        resourceId: ressource.id,
+                                      ),
                                     ),
                                   );
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
+                                        // Image de fond
                                         SizedBox(
                                           height: 100,
                                           width: double.infinity,
@@ -184,22 +171,16 @@ class _CatalogueState extends State<Catalogue> {
                                             fit: BoxFit.cover,
                                           ),
                                         ),
+                                        // Flou de fond
                                         Positioned.fill(
                                           child: BackdropFilter(
-                                            filter: ImageFilter.blur(
-                                              sigmaX: 5,
-                                              sigmaY: 5,
-                                            ),
+                                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                             child: Container(
-                                              color: Color.fromRGBO(
-                                                0,
-                                                0,
-                                                0,
-                                                0.2,
-                                              ),
+                                              color: Color.fromRGBO(0, 0, 0, 0.2),
                                             ),
                                           ),
                                         ),
+                                        // Titre de la ressource en surimpression
                                         Text(
                                           ressource.titre,
                                           style: const TextStyle(
@@ -222,7 +203,8 @@ class _CatalogueState extends State<Catalogue> {
                 ),
               ),
             ),
-            const Footer(),
+
+            const Footer(), // Pied de page
           ],
         ),
       ),
