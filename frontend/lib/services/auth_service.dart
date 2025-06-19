@@ -4,7 +4,7 @@ import '../models/user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  static const String _baseUrl = 'http://79.137.33.245:9000/auth';
+  static const String _baseUrl = 'http://79.137.33.245:9000/api/auth';
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
   static Future<Map<String, dynamic>> login({

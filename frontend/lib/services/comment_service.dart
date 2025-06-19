@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/comment.dart';
 
 class CommentService {
-  static const String _baseUrl = 'http://79.137.33.245:9000/comments';
+  static const String _baseUrl = 'http://79.137.33.245:9000/api/comments';
 
   static Future<List<Comment>> fetchComments(int resourceId) async {
     final response = await http.post(

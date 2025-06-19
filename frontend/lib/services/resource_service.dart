@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/resource.dart';
 
 class ResourceService {
-  static const String _baseUrl = 'http://79.137.33.245:9000/resources';
+  static const String _baseUrl = 'http://79.137.33.245:9000/api/resources';
 
   static Future<List<Resource>> fetchResources() async {
     try {
