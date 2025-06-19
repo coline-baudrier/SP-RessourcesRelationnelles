@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-# Installer les dépendances
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -15,20 +15,26 @@ RUN apt-get update && apt-get install -y \
     liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Installer Flutter (version stable)
+# Install Flutter
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter -b stable
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-# Vérifier l'installation
+# Run flutter doctor
 RUN flutter doctor -v
 
-# Activer le support web et construire l'application
+# Enable web and get dependencies
 RUN flutter config --enable-web
-WORKDIR /app
-COPY . .
-RUN flutter pub get
-RUN flutter build web
 
-# Exposer le port et démarrer le serveur web
+WORKDIR /app
+COPY pubspec.yaml .
+RUN flutter pub get
+
+# Copy the rest of the files
+COPY . .
+
+# Build web
+RUN flutter build web --release
+
+# Expose port and run
 EXPOSE 5000
-CMD ["flutter", "run", "--release", "-d", "web-server", "--web-port", "5000", "--web-hostname", "0.0.0.0", "--verbose"]
+CMD ["flutter", "run", "--release", "--web-port", "5000", "--web-hostname", "0.0.0.0"]
