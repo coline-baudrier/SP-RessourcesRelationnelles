@@ -20,8 +20,8 @@ services:
     restart: unless-stopped
 
   php:
-    build: ./backend
-    env_file: .env
+    build: ./backend # Permet d'utiliser le Dockerfile qui est présent dans le dossier backend
+    env_file: .env # Charge les variables depuis le .env
     ports:
       - "${PHP_PORT}:80"
     depends_on:
