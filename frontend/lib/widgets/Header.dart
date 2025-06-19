@@ -44,11 +44,11 @@ class Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Le site officiel du ministre TEST",
+                  "Le site officiel du Ministre",
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  "des solidarités et de la santé",
+                  "des Solidarités et de la Santé",
                   style: TextStyle(fontSize: 20),
                 ),
               ],
