@@ -1,0 +1,104 @@
+name: Deploy on Merge to Main
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  deployments: write
+
+jobs:
+  deploy-on-merge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'dev'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SSH Deployment
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 79.137.33.245
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/SP-RessourcesRelationnelles
+            echo "Mise à jour du dépôt depuis main..."
+            git fetch origin
+            git checkout main
+            git pull origin main
+            
+            echo "Arrêt des containers..."
+            docker-compose down
+            
+            echo "Rebuild et redémarrage des containers..."
+            docker-compose up -d --build
+            
+            echo "Nettoyage Docker..."
+            docker system prune -f
+            
+            echo "🔥 Déploiement terminé avec succès !"
+
+      - name: Add "done" label to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ['done']
+            });
+
+      - name: Move PR to Done column
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const projects = await github.rest.projects.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const project = projects.data.find(p => p.name === "Ressources Relationnelles's Project");
+
+            if (!project) {
+              core.setFailed("❌ Projet non trouvé.");
+              return;
+            }
+
+            const columns = await github.rest.projects.listColumns({
+              project_id: project.id
+            });
+
+            const doneColumn = columns.data.find(c => c.name === 'Done');
+            if (!doneColumn) {
+              core.setFailed("❌ Colonne 'Done' non trouvée.");
+              return;
+            }
+
+            // Créer une carte pour la PR dans la colonne 'Done'
+            await github.rest.projects.createCard({
+              column_id: doneColumn.id,
+              content_id: context.payload.pull_request.id,
+              content_type: 'PullRequest'
+            });
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "✅ Déploiement effectué suite au merge de `dev` vers `main`. La PR a été déplacée dans la colonne **Done** du projet."
+            });
