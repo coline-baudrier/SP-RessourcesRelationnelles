@@ -37,4 +37,4 @@ RUN flutter build web --release
 
 # Expose port and run
 EXPOSE 5000
-CMD ["flutter", "run", "--release", "--web-port", "5000", "--web-hostname", "0.0.0.0"]
+CMD ["flutter", "run", "--release", "--web-port", "5000", "--web-hostname", "0.0.0.0", "-d", "web-server"]
