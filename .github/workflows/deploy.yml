@@ -1,0 +1,98 @@
+name: Deploy on Done
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  deployments: write
+
+jobs:
+  deploy-to-vps:
+    if: github.event.label.name == 'done'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Move issue to Done column
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Récupérer le projet
+            const projects = await github.rest.projects.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            const project = projects.data.find(p => p.name === 'Ressources Relationnelles's Project');
+            
+            if (project) {
+              // Récupérer les colonnes
+              const columns = await github.rest.projects.listColumns({
+                project_id: project.id
+              });
+              
+              const doneColumn = columns.data.find(c => c.name === 'Done');
+              
+              if (doneColumn) {
+                // Récupérer les cartes existantes
+                const cards = await github.rest.projects.listCards({
+                  column_id: doneColumn.id
+                });
+                
+                // Vérifier si l'issue n'est pas déjà dans la colonne
+                const existingCard = cards.data.find(c => c.content_url.includes('/issues/${{ github.event.issue.number }}'));
+                
+                if (!existingCard) {
+                  // Ajouter l'issue à la colonne Done
+                  await github.rest.projects.createCard({
+                    column_id: doneColumn.id,
+                    content_id: ${{ github.event.issue.node_id }},
+                    content_type: 'Issue'
+                  });
+                }
+              }
+            }
+
+      - name: SSH Deployment
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 79.137.33.245
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/SP-RessourcesRelationnelles
+            echo "Mise à jour du dépôt depuis main..."
+            git fetch origin
+            git checkout main
+            git pull origin main
+            
+            echo "Arrêt des containers..."
+            docker-compose down
+            
+            echo "Rebuild et redémarrage des containers..."
+            docker-compose up -d --build
+            
+            echo "Nettoyage Docker..."
+            docker system prune -f
+            
+            echo "🔥 Déploiement terminé avec succès !"
+
+      - name: Add deployment comment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "✅ Déploiement sur le VPS effectué avec succès ! L'issue a été déplacée dans 'Done'."
+            })
