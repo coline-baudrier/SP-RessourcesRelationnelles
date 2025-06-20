@@ -44,7 +44,7 @@ class Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Le site officiel du Ministre",
+                  "Le site officiel du Ministère",
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
